@@ -1,0 +1,47 @@
+version: '2.1'
+
+services:
+
+  nginx:
+    build: ./docker/nginx/
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - dockerlocal
+
+  php:
+    build: ./docker/php/
+    volumes:
+      - .:/var/www/html
+    networks:
+      - dockerlocal
+
+  redis:
+    image: redis:alpine
+    networks:
+      - dockerlocal
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: pacifico_servicios
+      MYSQL_USER: pacifico_servicios
+      MYSQL_PASSWORD: secret
+    volumes:
+      - mysqldata:/var/lib/mysql
+    networks:
+      - dockerlocal
+
+networks:
+  dockerlocal:
+    driver: "bridge"
+
+volumes:
+  mysqldata:
+    external: true
+    name: pacificoservicios20_mysqldata
